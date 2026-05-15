@@ -32,3 +32,25 @@ print(f"{'='*60}")
 print(comparacion[['algoritmo', 'porcentaje_etiquetado', 'n_etiquetados',
                     'accuracy', 'f1']].to_string(index=False))
 print(f"\nExportado: {out_path}")
+
+# Tabla pivot: modelos como columnas, escenarios como filas
+for metrica in ['accuracy', 'f1']:
+    pivot = comparacion.pivot_table(
+        index='porcentaje_etiquetado',
+        columns='algoritmo',
+        values=metrica
+    ).round(4)
+    pivot.index.name = '% Etiquetado'
+    print(f"\n{metrica.capitalize()} por modelo y escenario:")
+    print(pivot.to_string())
+
+pivot_acc = comparacion.pivot_table(index='porcentaje_etiquetado', columns='algoritmo', values='accuracy').round(4)
+pivot_f1  = comparacion.pivot_table(index='porcentaje_etiquetado', columns='algoritmo', values='f1').round(4)
+pivot_acc.columns = [f'accuracy_{c}' for c in pivot_acc.columns]
+pivot_f1.columns  = [f'f1_{c}'       for c in pivot_f1.columns]
+pivot_out = pd.concat([pivot_acc, pivot_f1], axis=1).reset_index()
+pivot_out.rename(columns={'porcentaje_etiquetado': 'porcentaje_etiquetado'}, inplace=True)
+
+pivot_path = os.path.join(RES, 'comparacion_pivot.csv')
+pivot_out.to_csv(pivot_path, index=False)
+print(f"\nPivot exportada: {pivot_path}")
