@@ -94,7 +94,7 @@ class TSVM:
 
 
 # ---------------------------------------------------------------------------
-if __name__ == '__main__' or __name__ != '__main__':
+if __name__ == '__main__':
     print("Cargando datos procesados...")
     X_train = pd.read_csv(os.path.join(PROC, 'X_train.csv')).values
     X_test  = pd.read_csv(os.path.join(PROC, 'X_test.csv')).values
